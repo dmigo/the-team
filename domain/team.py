@@ -58,10 +58,11 @@ class Person:
 @dataclass
 class Team:
     members: List[Person]
-    idle_task: Task = Task('Rest')
+    idle_task: Task
 
     def __init__(self):
         self.members = []
+        self.idle_task = Task('Rest')
 
     def hire(self, person: Person):
         if person.team:
