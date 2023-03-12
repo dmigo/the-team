@@ -1,9 +1,11 @@
 import enum
 import logging
 from typing import Optional, List
+from datetime import time
 
 from dataclasses import dataclass
 from pathlib import Path
+from datetime import time
 
 logger = logging.getLogger(__name__)
 
@@ -153,6 +155,10 @@ class ProductMeeting(Activity):
 class Day:
     team: Team
     number: int = 1
+    elapsed_hours: int = 0
+    
+    DAY_START:int = 8
+    STANDARD_MEETING_LENGTH:int = 1
 
     def plan(self):
         feature = self.team.features.pop()
@@ -162,6 +168,7 @@ class Day:
         feature.tasks = new_tasks
 
         self.team.features.append(feature)
+        self.elapsed_hours+=self.STANDARD_MEETING_LENGTH
 
     def meet_pm(self):
         product_meeting = ProductMeeting()
@@ -169,7 +176,12 @@ class Day:
 
         self.team.features.append(new_feature)
         self.team.pass_hour()
+        self.elapsed_hours+=self.STANDARD_MEETING_LENGTH
 
     def work(self):
         self.team.pass_hour()
+        self.elapsed_hours+=self.STANDARD_MEETING_LENGTH
+
+    def current_time(self)->time:
+        return time(hour=self.DAY_START+self.elapsed_hours)
 
