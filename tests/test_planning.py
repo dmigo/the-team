@@ -50,6 +50,21 @@ class TestPlanning:
         day.plan()
 
         assert team.idle_time() == 0
+    
+    def test_that_planning_takes_time(self, day, feature, team):
+        team.features.append(feature)
+
+        day.plan()
+
+        assert day.elapsed_hours==1
+    
+    def test_that_two_plannings_take_twice_the_time(self, day, feature, team):
+        team.features.append(feature)
+
+        day.plan()
+        day.plan()
+
+        assert day.elapsed_hours==2
 
 
 

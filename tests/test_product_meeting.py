@@ -52,3 +52,14 @@ class TestProductMeeting:
 
         assert task.progress == jessie.skill
     
+    def test_that_meeting_pm_takes_time(self, day):
+        day.meet_pm()
+
+        assert day.elapsed_hours == day.STANDARD_MEETING_LENGTH
+        
+    def test_that_two_meeting_take_twice_the_time(self, day):
+        day.meet_pm()
+        day.meet_pm()
+
+        assert day.elapsed_hours == 2*day.STANDARD_MEETING_LENGTH
+    
