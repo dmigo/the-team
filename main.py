@@ -4,13 +4,16 @@ from typing import List
 from time import sleep
 
 
-PROMPT = """
+RULES = """
 How would you like to spend the next hour?
 The options are:
 1. Meet the PM
 2. Plan the next available feature
 3. Assign tasks
 4. Just work in peace
+"""
+PROMPT = """
+What do you do now?
 """
 
 @dataclass
@@ -31,7 +34,6 @@ class TeamReporter:
         print("")
 
 
-
 @dataclass
 class FeaturesReporter:
     features: List[Feature]
@@ -49,6 +51,7 @@ class DayReporter:
     day: Day
 
     def report(self):
+        print("")
         print(f"# DAY {self.day.number} {self.day.current_time()} #")
         print("")
         team_reporter = TeamReporter(team=self.day.team)
@@ -72,6 +75,15 @@ def setup_game()-> Day:
 
     return day
 
+def ellipsis():
+    sleep(1)
+    print('.')
+    sleep(1)
+    print('.', end='')
+    sleep(1)
+    print('.', end='')
+
+
 def main_loop():
     day = setup_game()
     p0 = day.team.members[0]
@@ -79,26 +91,30 @@ def main_loop():
     p2 = day.team.members[2]
     p3 = day.team.members[3]
 
-    print(PROMPT)
-    print("")
-    sleep(3)
     reporter = DayReporter(day=day)
-    sleep(3)
-    day.meet_pm()
-    reporter.report()
-    sleep(3)
-    day.plan()
-    reporter.report()
-    t1 = day.team.features[0].tasks[0]
-    t2 = day.team.features[0].tasks[1]
-    p0.assigned_task = t1
-    p1.assigned_task = t1
-    p2.assigned_task = t1
-    p3.assigned_task = t2
-    sleep(3)
-    day.work()
-    reporter.report()
-    sleep(10)
+    print(RULES)
+
+    while(True):
+        action = input(PROMPT)
+        if action == "1":
+            day.meet_pm()
+            reporter.report()
+        elif action == "2":
+            day.plan()
+            reporter.report()
+        elif action == "3":
+            t1 = day.team.features[0].tasks[0]
+            t2 = day.team.features[0].tasks[1]
+            p0.assigned_task = t1
+            p1.assigned_task = t1
+            p2.assigned_task = t1
+            p3.assigned_task = t2
+        elif action == "4":
+            day.work()
+            reporter.report()
+        else:
+            print("No such action")
+
 
 if __name__ =="__main__":
     main_loop()

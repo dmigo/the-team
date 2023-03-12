@@ -27,14 +27,14 @@ class TestPassHour:
 
 
     def test_that_task_moves_forward(self, team, jessie):
-        jessie.assigned_task = Task('Do something')
+        jessie.assigned_task = Task(name='Do something')
 
         team.pass_hour()
 
         assert jessie.assigned_task.progress == jessie.skill
     
     def test_that_task_moves_forward_twice(self, team, jessie):
-        jessie.assigned_task = Task('Do something')
+        jessie.assigned_task = Task(name='Do something')
 
         team.pass_hour()
         team.pass_hour()
@@ -55,7 +55,7 @@ class TestPassHour:
     
 
     def test_that_shared_tasks_moves_forward_for_each_person_working(self, team, jessie, jim,john, jane):
-        task = Task('Setup database')
+        task = Task(name='Setup database')
         jim.assigned_task = task
         jane.assigned_task = task
 
