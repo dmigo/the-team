@@ -44,6 +44,18 @@ class TestPlanning:
 
         assert len(feature.tasks) > 1
     
+    def test_that_feature_gets_split_twice(self, day, feature, team):
+        team.features.append(feature)
+        assert len(feature.tasks) == 1
+
+        day.plan()
+
+        assert len(feature.tasks) == 2
+
+        day.plan()
+
+        assert len(feature.tasks) == 4
+    
     def test_that_the_team_is_not_idle(self, day, feature, team):
         team.features.append(feature)
 

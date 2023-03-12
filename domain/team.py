@@ -137,7 +137,7 @@ class Planning(Activity):
             subtasks = task.break_down()
             result.extend(subtasks)
 
-        return subtasks
+        return result
 
 class ProductMeeting(Activity):
     def do(self) -> Feature:
