@@ -152,6 +152,7 @@ class ProductMeeting(Activity):
 @dataclass
 class Day:
     team: Team
+    number: int = 1
 
     def plan(self):
         feature = self.team.features.pop()
