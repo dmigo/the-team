@@ -1,5 +1,5 @@
 import pytest
-from domain.team import Day, Person, Team
+from domain.team import Day, Person, Team, Task
 
 class TestProductMeeting:
 
@@ -35,4 +35,20 @@ class TestProductMeeting:
         day.meet_pm()
 
         assert len(team.features) == 1
+    
+    def test_that_the_team_without_a_task_is_idle(self, day, team):
+        assert team.idle_time() == 0
+
+        day.meet_pm()
+
+        assert team.idle_time() > 0
+    
+    def test_that_the_team_with_a_task_makes_progress(self, day, team, jessie):
+        task = Task('Do work')
+        jessie.assigned_task = task
+        assert task.progress == 0
+
+        day.meet_pm()
+
+        assert task.progress == jessie.skill
     
