@@ -16,8 +16,6 @@ class TestPassHour:
         return Person('Jane Daniels', 7)
 
 
-
-
     @pytest.fixture
     def team(self, jessie, jim, john, jane):
         team = Team()

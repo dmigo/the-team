@@ -29,6 +29,11 @@ class Task:
         self.progress += score
 
 @dataclass
+class Feature:
+    name: str
+    tasks: List[Task]
+
+@dataclass
 class Person:
     name: str
     skill: int
@@ -59,9 +64,11 @@ class Person:
 class Team:
     members: List[Person]
     idle_task: Task
+    features: List[Feature]
 
     def __init__(self):
         self.members = []
+        self.features = []
         self.idle_task = Task('Rest')
 
     def hire(self, person: Person):
@@ -79,9 +86,56 @@ class Team:
         return self.idle_task.progress
 
 @dataclass
+class Activity:
+    def do(self):
+        pass
+
+class Planning(Activity):
+    def do(self, feature: Feature) -> List[Task]:
+        """Breaks down a feature into a list of smaller tasks
+
+        :param feature: a feature that we want to plan and break down
+        :return: new list of tasks, that are the same tasks but better defined
+        """
+        result = []
+        for task in feature.tasks:
+            subtasks = task.break_down()
+            result.append_many(subtasks)
+
+        return subtasks
+
+class ProductMeeting(Activity):
+    def do(self) -> Feature:
+        """Meet your PM, prepare a new feature for your team to work on
+
+        :return: a newly planned feature
+        """
+        initial_task = Task('We need some task factory')
+        feature = Feature(name="We need some features factory", tasks=[initial_task])
+        return feature
+
+
+
+@dataclass
 class Day:
     team: Team
 
-    def pass_hour(self):
+    def plan(self):
+        feature = self.team.features.pop()
+        planning = Planning()
+
+        new_tasks = planning.do(feature)
+        feature.tasks = new_tasks
+
+        self.team.features.append(feature)
+
+    def meet_pm(self):
+        product_meeting = ProductMeeting()
+        new_feature = product_meeting.do()
+
+        self.team.features.append(new_feature)
+        self.team.pass_hour()
+
+    def work(self):
         self.team.pass_hour()
 
