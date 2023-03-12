@@ -44,7 +44,7 @@ class TestProductMeeting:
         assert team.idle_time() > 0
     
     def test_that_the_team_with_a_task_makes_progress(self, day, team, jessie):
-        task = Task('Do work')
+        task = Task(name='Do work')
         jessie.assigned_task = task
         assert task.progress == 0
 

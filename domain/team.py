@@ -10,11 +10,14 @@ logger = logging.getLogger(__name__)
 
 @enum.unique
 class Complexity(enum.Enum):
-    S = 1
-    M = 2
-    L = 3
-    XL = 4
-    UNKNOWN = 5
+    XXS = 1
+    XS = 2
+    S = 3
+    M = 5
+    L = 8
+    XL = 13
+    XXL = 21
+    UNKNOWN = 0
 
 @dataclass
 class Task:
@@ -22,11 +25,41 @@ class Task:
     progress: int = 0
     complexity: Complexity = Complexity.UNKNOWN
 
-    def __init__(self, name: str):
-        self.name = name
-
     def make_progress(self, score: int):
         self.progress += score
+
+    def break_down(self) -> List:
+        if self.complexity is Complexity.UNKNOWN:
+            # TODO make it more random
+            return [
+                Task(name=f"{self.name} 1", complexity=Complexity.L), 
+                Task(name=f"{self.name} 2", complexity=Complexity.M),
+                ]
+        elif self.complexity is Complexity.L:
+            return [
+                Task(name=f"{self.name}.1", complexity=Complexity.S), 
+                Task(name=f"{self.name}.2", complexity=Complexity.XS),
+            ]
+        elif self.complexity is Complexity.M:
+            return [
+                Task(name=f"{self.name}.1", complexity=Complexity.XS), 
+                Task(name=f"{self.name}.2", complexity=Complexity.XXS),
+            ]
+        elif self.complexity is Complexity.S:
+            return [
+                Task(name=f"{self.name}.1", complexity=Complexity.XXS), 
+                Task(name=f"{self.name}.2", complexity=Complexity.XXS),
+            ]
+        elif self.complexity is Complexity.XS:
+            return [
+                Task(name=f"{self.name}.1", complexity=Complexity.XXS),
+            ]
+        elif self.complexity is Complexity.XXS:
+            return [
+                Task(name=f"{self.name}.1", complexity=Complexity.XXS),
+            ]
+        else:
+            raise Exception("Unknown size")
 
 @dataclass
 class Feature:
@@ -69,7 +102,7 @@ class Team:
     def __init__(self):
         self.members = []
         self.features = []
-        self.idle_task = Task('Rest')
+        self.idle_task = Task(name='Rest')
 
     def hire(self, person: Person):
         if person.team:
@@ -100,7 +133,7 @@ class Planning(Activity):
         result = []
         for task in feature.tasks:
             subtasks = task.break_down()
-            result.append_many(subtasks)
+            result.extend(subtasks)
 
         return subtasks
 
@@ -110,7 +143,7 @@ class ProductMeeting(Activity):
 
         :return: a newly planned feature
         """
-        initial_task = Task('We need some task factory')
+        initial_task = Task(name='We need some task factory')
         feature = Feature(name="We need some features factory", tasks=[initial_task])
         return feature
 
