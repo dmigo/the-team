@@ -1,3 +1,4 @@
+import click
 from dataclasses import dataclass
 from domain.team import Team, Day, Feature, Person
 from typing import List
@@ -11,27 +12,29 @@ The options are:
 2. Plan the next available feature
 3. Assign tasks
 4. Just work in peace
+q. For quit
 """
 PROMPT = """
 What do you do now?
 """
+
 
 @dataclass
 class TeamReporter:
     team: Team
 
     def report(self):
-        print(f"## Current team ##")
+        click.echo(f"## Current team ##")
         for member in self.team.members:
-            print(f'\t{member.name}\t[skill: {member.skill}]')
-        print("")
+            click.echo(f"\t{member.name}\t[skill: {member.skill}]")
+        click.echo("")
         features_reporter = FeaturesReporter(features=self.team.features)
         features_reporter.report()
-        print("")
-        print("## Current idleness ##")
-        print("")
-        print(self.team.idle_time())
-        print("")
+        click.echo("")
+        click.echo("## Current idleness ##")
+        click.echo("")
+        click.echo(self.team.idle_time())
+        click.echo("")
 
 
 @dataclass
@@ -39,31 +42,31 @@ class FeaturesReporter:
     features: List[Feature]
 
     def report(self):
-        print(f'### Current work in progress ###')
+        click.echo(f"### Current work in progress ###")
         for feature in self.features:
-            print("")
-            print(f'\t {feature.name}\t[{len(feature.tasks)}]')
+            click.echo("")
+            click.echo(f"\t {feature.name}\t[{len(feature.tasks)}]")
             for task in feature.tasks:
-                print(f'\t {task.name}\t[{task.complexity} {task.progress}]')
+                click.echo(f"\t {task.name}\t[{task.complexity} {task.progress}]")
+
 
 @dataclass
 class DayReporter:
     day: Day
 
     def report(self):
-        print("")
-        print(f"# DAY {self.day.number} {self.day.current_time()} #")
-        print("")
+        click.echo("")
+        click.secho(f"# DAY {self.day.number} {self.day.current_time()} #", bold=True)
+        click.echo("")
         team_reporter = TeamReporter(team=self.day.team)
         team_reporter.report()
 
-            
 
-def setup_game()-> Day:
-    jessie = Person('Jessie Daniels', 7)
-    jim = Person('Jim Daniels', 13)
-    john = Person('John Daniels', 5)
-    jane = Person('Jane Daniels', 21)
+def setup_game() -> Day:
+    jessie = Person("Jessie Daniels", 7)
+    jim = Person("Jim Daniels", 13)
+    john = Person("John Daniels", 5)
+    jane = Person("Jane Daniels", 21)
 
     team = Team()
     team.hire(jessie)
@@ -71,17 +74,18 @@ def setup_game()-> Day:
     team.hire(john)
     team.hire(jane)
 
-    day = Day(team =team)
+    day = Day(team=team)
 
     return day
 
+
 def ellipsis():
     sleep(1)
-    print('.')
+    click.echo(".")
     sleep(1)
-    print('.', end='')
+    click.echo(".", end="")
     sleep(1)
-    print('.', end='')
+    click.echo(".", end="")
 
 
 def main_loop():
@@ -92,9 +96,9 @@ def main_loop():
     p3 = day.team.members[3]
 
     reporter = DayReporter(day=day)
-    print(RULES)
+    click.echo(RULES)
 
-    while(True):
+    while True:
         action = input(PROMPT)
         if action == "1":
             day.meet_pm()
@@ -112,9 +116,13 @@ def main_loop():
         elif action == "4":
             day.work()
             reporter.report()
+        elif action == "q":
+            # TODO calculate score
+            click.secho("Fare well!", bold=True)
+            break
         else:
-            print("No such action")
+            click.secho("No such action", bold=True)
 
 
-if __name__ =="__main__":
+if __name__ == "__main__":
     main_loop()
